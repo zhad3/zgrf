@@ -1,0 +1,11 @@
+{
+	"authors": [
+		"zhad3"
+	],
+	"copyright": "Copyright © 2020, zhad3",
+	"description": "Library to interact with Gravity's GRF files.",
+	"license": "MIT",
+	"name": "zgrf",
+	"targetType": "library",
+	"targetPath": "bin"
+}
