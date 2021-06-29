@@ -7,5 +7,34 @@
 	"license": "MIT",
 	"name": "zgrf",
 	"targetType": "library",
-	"targetPath": "bin"
+	"targetPath": "bin",
+    "dependencies": {
+        "zgrf:compression": "*",
+        "zgrf:crypto": "*",
+        "zencoding:windows949": "~>1.0.0"
+    },
+    "subPackages": [
+        "./compression/",
+        "./crypto/"
+    ],
+    "buildTypes": {
+        "docs": {
+            "buildOptions": ["syntaxOnly"],
+            "dflags": ["-c", "-Dddocs", "-preview=markdown"]
+        }
+    },
+    "configurations": [
+        {
+            "name": "zgrf"
+        },
+        {
+            "name": "profiling",
+            "buildTypes": {
+                "debug": {
+                    "buildOptions": ["releaseMode", "debugInfo", "inline"]
+                }
+            },
+            "dflags": ["-mcpu=native", "-O3"]
+        }
+    ]
 }

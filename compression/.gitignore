@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/compression
+compression.so
+compression.dylib
+compression.dll
+compression.a
+compression.lib
+compression-test-*
+*.exe
+*.o
+*.obj
+*.lst
+c/build/

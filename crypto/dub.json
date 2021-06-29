@@ -1,0 +1,10 @@
+{
+	"authors": [
+		"zhad3"
+	],
+	"copyright": "Copyright © 2021, zhad3",
+	"description": "zgrf crypto algorithms",
+	"license": "MIT",
+	"name": "crypto",
+    "targetType": "sourceLibrary"
+}
