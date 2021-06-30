@@ -153,7 +153,7 @@ in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file d
     import zgrf.constants : HEADER_LEN, FileFlags;
 
     grf.filehandle.seek(file.offset + HEADER_LEN);
-    ubyte[] encryptedData = new ubyte[file.compressed_size_padded];
+    scope ubyte[] encryptedData = new ubyte[file.compressed_size_padded];
     grf.filehandle.rawRead(encryptedData);
 
     if (file.compressed_size_padded % 8 > 0)
@@ -163,20 +163,23 @@ in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file d
         encryptedData.length += 8 - (file.compressed_size_padded % 8);
     }
 
-    ubyte[] decryptedData;
+    scope ubyte[] decryptedData;
     if (file.flags & FileFlags.MIXCRYPT)
     {
         import zgrf.crypto.mixcrypt;
 
-        decryptedData = zgrf.crypto.mixcrypt.decrypt(encryptedData, [0, 0, 0, 0, 0, 0, 0, 0],
+        decryptedData = zgrf.crypto.mixcrypt.decrypt(encryptedData, [],
                 file.compressed_size);
     }
     else if (file.flags & FileFlags.DES)
     {
         import zgrf.crypto.desbroken;
 
-        decryptedData = zgrf.crypto.desbroken.decrypt(encryptedData, [0, 0, 0, 0, 0, 0, 0, 0],
+        decryptedData = encryptedData.dup;
+        const minsize = encryptedData.length < 20 * 8 ? encryptedData.length : 20 * 8;
+        const beginningData = zgrf.crypto.desbroken.decrypt(encryptedData[0 .. minsize], [],
                 file.compressed_size);
+        decryptedData[0 .. beginningData.length] = beginningData;
     }
     else
     {

@@ -159,7 +159,7 @@ private GRFFile extractFile(ref ubyte[] buffer, ref ulong offset, uint grfVersio
     file.name = fromWindows949(file.rawName);
 
     // Update compressed sizes
-    file.compressed_size -= file.size - 0x02CB;
+    file.compressed_size -= file.size + 0x02CB;
     file.compressed_size_padded -= 0x92CB;
 
     return file;
