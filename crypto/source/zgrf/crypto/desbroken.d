@@ -35,8 +35,7 @@ ubyte[] encrypt(const(ubyte)[] data, const(ubyte)[] key = []) pure
  * Calls [zgrf.crypto.des.decrypt2] with the subkeys function [createSubkeys] and
  * the process function [processBlock].
  *
- * The data must be a multiple of 8 bytes long and the unencryptedSize
- * cannot be larger than the encrypted data size.
+ * The data must be a multiple of 8 bytes long.
  *
  * Params:
  *     data =  The data array to be decrypted
@@ -48,7 +47,6 @@ ubyte[] encrypt(const(ubyte)[] data, const(ubyte)[] key = []) pure
  */
 ubyte[] decrypt(const(ubyte)[] data, const(ubyte)[] key, const size_t unencryptedSize) pure
 in (data.length % 8 == 0, "Data must be a multiple of 64 bits (8 bytes)")
-in (unencryptedSize <= data.length, "Unencrypted data size cannot be bigger than encrypted data size")
 {
     return zgrf.crypto.des.decrypt2(data, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], unencryptedSize,
             &createSubkeys, &processBlock);

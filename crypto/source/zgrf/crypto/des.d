@@ -222,8 +222,6 @@ ubyte[] encrypt(const(ubyte)[] data, const(ubyte)[] key) pure
  *
  * The input data must be a multiple of 8 bytes and the input key
  * must be exactly 8 bytes long.
- * Additionally the unencryptedSize cannot be bigger than the
- * encrypted (input data) size.
  *
  * Params:
  *  data = The data array to be decrypted
@@ -242,7 +240,6 @@ ubyte[] decrypt2(const(ubyte)[] data, const(ubyte)[] key, const size_t unencrypt
         ProcessBlockFunc processFunc) pure
 in (data.length % 8 == 0, "Data must be a multiple of 64 bits (8 bytes)")
 in (key.length == 8, "Key must be 64 bits (8 bytes) long")
-in (unencryptedSize <= data.length, "Unencrypted data size cannot be bigger than encrypted data size")
 {
 
     const size_t length = data.length;
@@ -264,9 +261,16 @@ in (unencryptedSize <= data.length, "Unencrypted data size cannot be bigger than
         decryptedData[i .. i + 8] = processedBlock;
     }
 
-    const size_t padding = decryptedData.length - unencryptedSize;
+    const long padding = decryptedData.length - unencryptedSize;
 
-    return decryptedData[0 .. $ - padding];
+    if (padding > 0)
+    {
+        return decryptedData[0 .. $ - padding];
+    }
+    else
+    {
+        return decryptedData;
+    }
 }
 
 /**
@@ -277,8 +281,6 @@ in (unencryptedSize <= data.length, "Unencrypted data size cannot be bigger than
  *
  * The input data must be a multiple of 8 bytes and the input key
  * must be exactly 8 bytes long.
- * Additionally the unencryptedSize cannot be bigger than the
- * encrypted (input data) size.
  *
  * Params:
  *  data = The data array to be decrypted

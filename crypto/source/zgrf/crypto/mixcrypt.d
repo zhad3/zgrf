@@ -93,8 +93,7 @@ ubyte[] encrypt(const(ubyte)[] data, const(ubyte)[] key = []) pure
 /**
  * Decrypts data using the key 0x00. Key parameter is ignored.
  *
- * The input data must be a multiple of 8 bytes long and the
- * unencryptedSize cannot be larger than the encrypted size.
+ * The input data must be a multiple of 8 bytes long.
  *
  * Params:
  *  data = The data array to be decrypted
@@ -106,7 +105,6 @@ ubyte[] encrypt(const(ubyte)[] data, const(ubyte)[] key = []) pure
  */
 ubyte[] decrypt(const(ubyte)[] data, const(ubyte)[] key, const size_t unencryptedSize) pure
 in (data.length % 8 == 0, "Data must be a multiple of 64 bits (8 bytes)")
-in (unencryptedSize <= data.length, "Unencrypted data size cannot be bigger than encrypted data size")
 {
     const size_t length = data.length;
 
@@ -140,8 +138,16 @@ in (unencryptedSize <= data.length, "Unencrypted data size cannot be bigger than
         }
     }
 
-    const size_t padding = decryptedData.length - unencryptedSize;
-    return decryptedData[0 .. $ - padding];
+    const long padding = decryptedData.length - unencryptedSize;
+
+    if (padding > 0)
+    {
+        return decryptedData[0 .. $ - padding];
+    }
+    else
+    {
+        return decryptedData;
+    }
 }
 
 private int getCycle(const size_t unencryptedSize) pure
