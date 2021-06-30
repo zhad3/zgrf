@@ -33,6 +33,11 @@ private ISzAlloc szAllocLzma = {&szAlloc, &szFree};
 ubyte[] uncompress(const(ubyte)[] srcbuf, size_t destlen = 0u)
 {
     ubyte[] dst;
+    if (destlen == 0)
+    {
+        destlen = srcbuf.length * 2 + 1;
+    }
+
     if (srcbuf[0] == 0)
     {
         if (srcbuf.length < LZMA_PROPS_SIZE + 1)
