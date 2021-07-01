@@ -8,9 +8,11 @@ The documentation can be found here: https://zgrf.dpldocs.info
 ## Building
 ### Requirements
 - DMD, LDC or GDC
+
 Additionally in order to compile the LZMA library a c compiler is required.
 For linux that would be
 - gcc
+
 and for Windows
 - msvc
 
