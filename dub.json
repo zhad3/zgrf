@@ -16,25 +16,5 @@
     "subPackages": [
         "./compression/",
         "./crypto/"
-    ],
-    "buildTypes": {
-        "docs": {
-            "buildOptions": ["syntaxOnly"],
-            "dflags": ["-c", "-Dddocs", "-preview=markdown"]
-        }
-    },
-    "configurations": [
-        {
-            "name": "zgrf"
-        },
-        {
-            "name": "profiling",
-            "buildTypes": {
-                "debug": {
-                    "buildOptions": ["releaseMode", "debugInfo", "inline"]
-                }
-            },
-            "dflags": ["-mcpu=native", "-O3"]
-        }
     ]
 }
