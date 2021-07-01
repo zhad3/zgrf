@@ -197,6 +197,17 @@ in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file d
 }
 
 /// ditto
+ubyte[] getFileData(ref GRFFile file)
+{
+    if (file.grf is null)
+    {
+        return [];
+    }
+
+    return getFileData(*file.grf, file);
+}
+
+/// ditto
 ubyte[] getFileData(ref GRF grf, const wstring filename)
 {
     import std.zlib;
