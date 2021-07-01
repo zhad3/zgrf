@@ -140,6 +140,9 @@ ref VirtualGRF parse(return ref VirtualGRF vgrf, const(wstring)[] filters = [])
 /**
  * Get the unencrypted and uncompressed data of a file inside the input grf.
  *
+ * This function will always allocate new memory and always call the decrypting
+ * and uncompressing routines. Means the returned data is not stored anywhere.
+ *
  * Params:
  *  grf = The grf to read the file from
  *  file = The metadata about the file to be read

@@ -9,7 +9,7 @@ import zgrf.types : GRFFile;
  *
  * Params:
  *  file = The file to check
- *  filtersList = The array of filters to check against
+ *  filterList = The array of filters to check against
  *
  * Returns:
  *  Whether the file matches one of the provided filters
