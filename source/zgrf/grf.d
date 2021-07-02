@@ -1,7 +1,7 @@
 module zgrf.grf;
 
 import std.stdio : File;
-import std.typecons : Flag, Yes;
+import std.typecons : Flag;
 import zgrf.types;
 
 /**
@@ -156,7 +156,7 @@ private alias CacheFlag = Flag!"useCache";
  * Returns:
  *  The unencrypted and uncompressed file data
  */
-ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, CacheFlag useCache = CacheFlag.yes)
+ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, CacheFlag useCache = CacheFlag.no)
 {
     if (useCache && file.data != file.data.init)
     {
@@ -224,14 +224,14 @@ ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, CacheFlag use
  * Returns:
  *  The unencrypted and uncompressed file data
  */
-ubyte[] getFileData(ref GRF grf, ref GRFFile file, CacheFlag useCache = CacheFlag.yes)
+ubyte[] getFileData(ref GRF grf, ref GRFFile file, CacheFlag useCache = CacheFlag.no)
 in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file data")
 {
     return getFileData(grf, file, grf.filehandle, useCache);
 }
 
 /// ditto
-ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = CacheFlag.yes)
+ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = CacheFlag.no)
 {
     if (file.grf is null)
     {
@@ -242,7 +242,7 @@ ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = CacheFlag.yes)
 }
 
 /// ditto
-ubyte[] getFileData(ref GRF grf, const wstring filename, CacheFlag useCache = CacheFlag.yes)
+ubyte[] getFileData(ref GRF grf, const wstring filename, CacheFlag useCache = CacheFlag.no)
 {
     import std.zlib;
 
@@ -258,7 +258,7 @@ ubyte[] getFileData(ref GRF grf, const wstring filename, CacheFlag useCache = Ca
 }
 
 /// ditto
-ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename, CacheFlag useCache = CacheFlag.yes)
+ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename, CacheFlag useCache = CacheFlag.no)
 {
     import std.zlib;
 
