@@ -8,8 +8,8 @@
 	"name": "compression",
     "targetType": "sourceLibrary",
 
-    "preBuildCommands-posix": ["$PACKAGE_DIR/build_clibs.sh $PACKAGE_DIR"],
-    "preBuildCommands-windows": ["$PACKGE_DIR/build_clibs.bat $PACKAGE_DIR"],
+    "preBuildCommands-posix": ["/bin/sh \"$PACKAGE_DIR/build_clibs.sh\" \"$PACKAGE_DIR\""],
+    "preBuildCommands-windows": ["cmd /c \"$PACKGE_DIR/build_clibs.bat $PACKAGE_DIR\""],
 
     "sourceFiles-posix": ["$PACKAGE_DIR/c/build/LzmaDec.o"],
     "sourceFiles-windows": ["$PACKAGE_DIR/c/build/LzmaDec.obj"],
