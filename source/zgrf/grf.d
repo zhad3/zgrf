@@ -1,5 +1,7 @@
 module zgrf.grf;
 
+import std.stdio : File;
+import std.typecons : Flag, Yes;
 import zgrf.types;
 
 /**
@@ -137,27 +139,35 @@ ref VirtualGRF parse(return ref VirtualGRF vgrf, const(wstring)[] filters = [])
     return vgrf.readHeader().readFiletable(filters);
 }
 
+private alias CacheFlag = Flag!"useCache";
+
 /**
  * Get the unencrypted and uncompressed data of a file inside the input grf.
  *
- * This function will always allocate new memory and always call the decrypting
- * and uncompressing routines. Means the returned data is not stored anywhere.
+ * This function will allocate new memory and always call the decrypting
+ * and uncompressing routines _unless_ cache is set to true.
  *
  * Params:
  *  grf = The grf to read the file from
  *  file = The metadata about the file to be read
+ *  grfHandle = Use this file handle instead of the one from grf
+ *  cache = Return the data from cache if it exists
  *
  * Returns:
  *  The unencrypted and uncompressed file data
  */
-ubyte[] getFileData(ref GRF grf, ref GRFFile file)
-in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file data")
+ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, CacheFlag useCache = CacheFlag.yes)
 {
+    if (useCache && file.data != file.data.init)
+    {
+        return file.data;
+    }
+
     import zgrf.constants : HEADER_LEN, FileFlags;
 
-    grf.filehandle.seek(file.offset + HEADER_LEN);
+    grfHandle.seek(file.offset + HEADER_LEN);
     scope ubyte[] encryptedData = new ubyte[file.compressed_size_padded];
-    grf.filehandle.rawRead(encryptedData);
+    grfHandle.rawRead(encryptedData);
 
     if (file.compressed_size_padded % 8 > 0)
     {
@@ -191,31 +201,55 @@ in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file d
 
     import zgrf.compression : uncompress;
 
-    file.data = uncompress(decryptedData, file.size);
+    if (useCache)
+    {
+        file.data = uncompress(decryptedData, file.size);
+        return file.data;
+    }
 
-    return file.data;
+    return uncompress(decryptedData, file.size);
+}
+
+/**
+ * Get the unencrypted and uncompressed data of a file inside the input grf.
+ *
+ * This function will always allocate new memory and always call the decrypting
+ * and uncompressing routines.
+ *
+ * Params:
+ *  grf = The grf to read the file from
+ *  file = The metadata about the file to be read
+ *  cache = Return the data from cache if it exists
+ *
+ * Returns:
+ *  The unencrypted and uncompressed file data
+ */
+ubyte[] getFileData(ref GRF grf, ref GRFFile file, CacheFlag useCache = CacheFlag.yes)
+in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file data")
+{
+    return getFileData(grf, file, grf.filehandle, useCache);
 }
 
 /// ditto
-ubyte[] getFileData(ref GRFFile file)
+ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = Yes.useCache)
 {
     if (file.grf is null)
     {
         return [];
     }
 
-    return getFileData(*file.grf, file);
+    return getFileData(*file.grf, file, useCache);
 }
 
 /// ditto
-ubyte[] getFileData(ref GRF grf, const wstring filename)
+ubyte[] getFileData(ref GRF grf, const wstring filename, CacheFlag useCache = CacheFlag.yes)
 {
     import std.zlib;
 
     const uint hash = crc32(0, filename);
     if (hash in grf.files)
     {
-        return getFileData(grf, grf.files[hash]);
+        return getFileData(grf, grf.files[hash], useCache);
     }
     else
     {
@@ -224,7 +258,7 @@ ubyte[] getFileData(ref GRF grf, const wstring filename)
 }
 
 /// ditto
-ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename)
+ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename, CacheFlag useCache = CacheFlag.yes)
 {
     import std.zlib;
 
@@ -232,7 +266,7 @@ ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename)
     if (hash in vgrf.files)
     {
         auto file = vgrf.files[hash];
-        return getFileData(*file.grf, file);
+        return getFileData(*file.grf, file, useCache);
     }
     else
     {
