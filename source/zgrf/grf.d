@@ -231,7 +231,7 @@ in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file d
 }
 
 /// ditto
-ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = Yes.useCache)
+ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = CacheFlag.yes)
 {
     if (file.grf is null)
     {

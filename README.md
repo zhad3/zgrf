@@ -73,11 +73,12 @@ int main(string[] args)
 
         import std.file : mkdirRecurse;
         import std.utf : toUTF8;
+        import std.typecons : No;
 
         mkdirRecurse(path.toUTF8);
 
-        // Unencrypt und decompress file data
-        const data = file.getFileData();
+        // Unencrypt und decompress file data. We also disable cache.
+        const data = file.getFileData(No.useCache);
 
         import std.stdio : File;
 
