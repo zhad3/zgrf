@@ -77,7 +77,7 @@ int main(string[] args)
 
         mkdirRecurse(path.toUTF8);
 
-        // Unencrypt und decompress file data. We also disable cache.
+        // Unencrypt and decompress file data. We also disable cache.
         const data = file.getFileData(No.useCache);
 
         import std.stdio : File;
