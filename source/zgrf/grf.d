@@ -1,7 +1,7 @@
 module zgrf.grf;
 
 import std.stdio : File;
-import std.typecons : Flag;
+import std.typecons : Flag, No;
 import zgrf.types;
 
 /**
@@ -139,8 +139,6 @@ ref VirtualGRF parse(return ref VirtualGRF vgrf, const(wstring)[] filters = [])
     return vgrf.readHeader().readFiletable(filters);
 }
 
-private alias CacheFlag = Flag!"useCache";
-
 /**
  * Get the unencrypted and uncompressed data of a file inside the input grf.
  *
@@ -151,12 +149,12 @@ private alias CacheFlag = Flag!"useCache";
  *  grf = The grf to read the file from
  *  file = The metadata about the file to be read
  *  grfHandle = Use this file handle instead of the one from grf
- *  cache = Return the data from cache if it exists
+ *  useCache = Return the data from cache if it exists
  *
  * Returns:
  *  The unencrypted and uncompressed file data
  */
-ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, CacheFlag useCache = CacheFlag.no)
+ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, Flag!"useCache" useCache = No.useCache)
 {
     if (useCache && file.data != file.data.init)
     {
@@ -219,19 +217,19 @@ ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, CacheFlag use
  * Params:
  *  grf = The grf to read the file from
  *  file = The metadata about the file to be read
- *  cache = Return the data from cache if it exists
+ *  useCache = Return the data from cache if it exists
  *
  * Returns:
  *  The unencrypted and uncompressed file data
  */
-ubyte[] getFileData(ref GRF grf, ref GRFFile file, CacheFlag useCache = CacheFlag.no)
+ubyte[] getFileData(ref GRF grf, ref GRFFile file, Flag!"useCache" useCache = No.useCache)
 in (grf.filehandle.isOpen(), "Filehandle of grf file must be open to read file data")
 {
     return getFileData(grf, file, grf.filehandle, useCache);
 }
 
 /// ditto
-ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = CacheFlag.no)
+ubyte[] getFileData(ref GRFFile file, Flag!"useCache" useCache = No.useCache)
 {
     if (file.grf is null)
     {
@@ -242,7 +240,7 @@ ubyte[] getFileData(ref GRFFile file, CacheFlag useCache = CacheFlag.no)
 }
 
 /// ditto
-ubyte[] getFileData(ref GRF grf, const wstring filename, CacheFlag useCache = CacheFlag.no)
+ubyte[] getFileData(ref GRF grf, const wstring filename, Flag!"useCache" useCache = No.useCache)
 {
     import std.zlib;
 
@@ -258,7 +256,7 @@ ubyte[] getFileData(ref GRF grf, const wstring filename, CacheFlag useCache = Ca
 }
 
 /// ditto
-ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename, CacheFlag useCache = CacheFlag.no)
+ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename, Flag!"useCache" useCache = No.useCache)
 {
     import std.zlib;
 
