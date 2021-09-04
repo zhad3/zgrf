@@ -11,6 +11,6 @@
     "preBuildCommands-posix": ["/bin/sh \"$PACKAGE_DIR/build_clibs.sh\" \"$PACKAGE_DIR\""],
     "preBuildCommands-windows": ["cmd /c \"$PACKAGE_DIR/build_clibs.bat $PACKAGE_DIR\""],
 
-    "sourceFiles-posix": ["$PACKAGE_DIR/c/build/LzmaDec.o"],
-    "sourceFiles-windows": ["$PACKAGE_DIR/c/build/LzmaDec.obj"]
+    "sourceFiles-posix": ["$PACKAGE_DIR/c/build/$ARCH-$BUILD_TYPE/LzmaDec.o"],
+    "sourceFiles-windows": ["$PACKAGE_DIR/c/build/$ARCH-$BUILD_TYPE/LzmaDec.obj"]
 }
