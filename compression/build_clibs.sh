@@ -2,17 +2,21 @@
 OLD_PWD=$PWD
 
 PACKAGE_DIR=$1
+ARCH=$DUB_ARCH
+BUILD_TYPE=$DUB_BUILD_TYPE
 
-if [ ! -d "$PACKAGE_DIR/c/build" ]; then
-    mkdir -p "$PACKAGE_DIR/c/build"
+DEST_DIR=$PACKAGE_DIR/c/build/$ARCH-$BUILD_TYPE
+
+if [ ! -d "$DEST_DIR" ]; then
+    mkdir -p "$DEST_DIR"
 fi
 
-if [ -f "$PACKAGE_DIR/c/build/LzmaDec.o" ]; then
+if [ -f "$PACKAGE_DIR/LzmaDec.o" ] && [ -z $DUB_FORCE ]; then
     exit
 fi
 
-cd $PACKAGE_DIR/c
+cd "$PACKAGE_DIR/c"
 
-gcc -c lzma/LzmaDec.c -o build/LzmaDec.o
+gcc -c lzma/LzmaDec.c -o "$DEST_DIR/LzmaDec.o"
 
-cd $OLD_PWD
+cd "$OLD_PWD"
