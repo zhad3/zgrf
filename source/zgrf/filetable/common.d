@@ -5,7 +5,7 @@ import zgrf.types : GRFFile;
 /**
  * Checks if a given [GRFFile] matches one of our filters.
  *
- * The check converts the name of the file to lowercase.
+ * The check performs a case insensitive glob match.
  *
  * Params:
  *  file = The file to check
@@ -20,14 +20,12 @@ bool inFilter(in ref GRFFile file, in ref const(wstring)[] filterList)
     {
         return true;
     }
-    import std.uni : toLower;
 
-    auto filenameLower = file.name.toLower;
     foreach (const filterString; filterList)
     {
-        import std.algorithm : startsWith;
+        import std.path : globMatch, CaseSensitive;
 
-        if (filenameLower.startsWith(filterString))
+        if (globMatch!(CaseSensitive.no)(file.name, filterString))
         {
             return true;
         }
