@@ -35,8 +35,6 @@ struct GRFFile
     uint size;
     /// Offset of the file after the file header
     uint offset;
-    /// Hash of the filename
-    uint hash;
     /// See zgrf.constants : FileFlags
     FileFlags flags;
     /// Offset in filetable
@@ -52,7 +50,7 @@ struct GRFFile
 }
 
 /// Hashmap of files
-alias GRFFiletable = GRFFile[uint];
+alias GRFFiletable = GRFFile[wstring];
 
 /**
  * Holds information about a GRF file.

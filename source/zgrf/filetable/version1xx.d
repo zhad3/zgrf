@@ -1,7 +1,6 @@
 module zgrf.filetable.version1xx;
 
 import core.stdc.stdio : SEEK_SET, SEEK_END;
-import std.zlib : crc32;
 import std.uni : toLower;
 
 import zgrf.constants;
@@ -60,7 +59,6 @@ in (grf.filesize > grf.header.filetableOffset, "GRF filesize < Filetable offset"
             if (inFilter(file, filters) && !isDirectory(file))
             {
                 file.offset_ft += grf.header.filetableOffset + HEADER_LEN;
-                file.hash = crc32(0, file.name.toLower);
                 file.grf = &grf;
                 if (hasSpecialExtension(file.name))
                 {
@@ -71,7 +69,7 @@ in (grf.filesize > grf.header.filetableOffset, "GRF filesize < Filetable offset"
                     file.flags |= FileFlags.MIXCRYPT;
                 }
 
-                files.require(file.hash, file);
+                files.require(file.name.toLower, file);
             }
         }
     }
@@ -83,7 +81,6 @@ in (grf.filesize > grf.header.filetableOffset, "GRF filesize < Filetable offset"
             if (!isDirectory(file))
             {
                 file.offset_ft += grf.header.filetableOffset + HEADER_LEN;
-                file.hash = crc32(0, file.name.toLower);
                 file.grf = &grf;
                 if (hasSpecialExtension(file.name))
                 {
@@ -93,7 +90,7 @@ in (grf.filesize > grf.header.filetableOffset, "GRF filesize < Filetable offset"
                 {
                     file.flags |= FileFlags.MIXCRYPT;
                 }
-                files.require(file.hash, file);
+                files.require(file.name.toLower, file);
             }
         }
     }

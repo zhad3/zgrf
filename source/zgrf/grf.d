@@ -242,12 +242,9 @@ ubyte[] getFileData(ref GRFFile file, Flag!"useCache" useCache = No.useCache)
 /// ditto
 ubyte[] getFileData(ref GRF grf, const wstring filename, Flag!"useCache" useCache = No.useCache)
 {
-    import std.zlib;
-
-    const uint hash = crc32(0, filename);
-    if (hash in grf.files)
+    if (filename in grf.files)
     {
-        return getFileData(grf, grf.files[hash], useCache);
+        return getFileData(grf, grf.files[filename], useCache);
     }
     else
     {
@@ -258,12 +255,9 @@ ubyte[] getFileData(ref GRF grf, const wstring filename, Flag!"useCache" useCach
 /// ditto
 ubyte[] getFileData(ref VirtualGRF vgrf, const wstring filename, Flag!"useCache" useCache = No.useCache)
 {
-    import std.zlib;
-
-    const uint hash = crc32(0, filename);
-    if (hash in vgrf.files)
+    if (filename in vgrf.files)
     {
-        auto file = vgrf.files[hash];
+        auto file = vgrf.files[filename];
         return getFileData(*file.grf, file, useCache);
     }
     else

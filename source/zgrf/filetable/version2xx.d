@@ -2,7 +2,6 @@ module zgrf.filetable.version2xx;
 
 import core.stdc.stdio : SEEK_SET, SEEK_END;
 import std.system : Endian;
-import std.zlib : crc32;
 import std.uni : toLower;
 import std.bitmanip : peek, read;
 
@@ -50,8 +49,7 @@ in (grf.header.grfVersion >= 0x200, "Minimum GRF version allowed for this fileta
             file.grf = &grf;
             if (inFilter(file, filters) && !isDirectory(file))
             {
-                file.hash = crc32(0, file.name.toLower);
-                files.require(file.hash, file);
+                files.require(file.name.toLower, file);
             }
         }
     }
@@ -64,8 +62,7 @@ in (grf.header.grfVersion >= 0x200, "Minimum GRF version allowed for this fileta
             {
                 file.offset_ft += grf.header.filetableOffset + HEADER_LEN;
                 file.grf = &grf;
-                file.hash = crc32(0, file.name.toLower);
-                files.require(file.hash, file);
+                files.require(file.name.toLower, file);
             }
         }
     }
