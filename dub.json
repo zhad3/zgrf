@@ -11,7 +11,7 @@
     "dependencies": {
         "zgrf:compression": "*",
         "zgrf:crypto": "*",
-        "zencoding:windows949": "~>1.0.0"
+        "zencoding:windows949": ">=1.0.0"
     },
     "subPackages": [
         "./compression/",
