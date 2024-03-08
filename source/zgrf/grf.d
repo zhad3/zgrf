@@ -175,6 +175,19 @@ ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, Flag!"useCach
     }
 
     scope ubyte[] decryptedData;
+
+    // Apparently if GRFEditor encryption is used then no other Ragnarok specific encryption
+    // is being utilised. So they're either GRFEditor encrypted or unencrypted. We still check
+    // for other encryption types though just to be safe.
+    bool isGRFEditorEncrypted = grf.isGRFEditorEncrypted(encryptedData);
+    if (isGRFEditorEncrypted)
+    {
+        import zgrf.crypto.grfeditor;
+
+        decryptedData = zgrf.crypto.grfeditor.decrypt(encryptedData, grf.grfEditorKey,
+                file.size);
+    }
+
     if (file.flags & FileFlags.MIXCRYPT)
     {
         import zgrf.crypto.mixcrypt;
@@ -192,7 +205,7 @@ ubyte[] getFileData(ref GRF grf, ref GRFFile file, File grfHandle, Flag!"useCach
                 file.compressed_size);
         decryptedData[0 .. beginningData.length] = beginningData;
     }
-    else
+    else if (!isGRFEditorEncrypted)
     {
         decryptedData = encryptedData;
     }
@@ -306,5 +319,43 @@ void close(ref VirtualGRF vgrf)
     {
         grf.close();
     }
+}
+
+/**
+ * Sets the GRFEditor key for encryption/decryption of data as done
+ * by GRFEditor.
+ */
+ref GRF setGRFEditorKey(return ref GRF grf, ubyte[] key)
+{
+    grf.grfEditorKey = key;
+    return grf;
+}
+
+/// ditto
+ref VirtualGRF setGRFEditorKey(return ref VirtualGRF vgrf, ubyte[] key)
+{
+    foreach (ref grf; vgrf.grfs)
+    {
+        grf.setGRFEditorKey(key);
+    }
+    return vgrf;
+}
+
+/**
+ * Checks if the given file data is encrypted using GRFEditors encryption scheme.
+ * Ultimately this checks for the absence of the zlib header as well as the starting
+ * zero byte for LZMA compression.
+ *
+ * Concrete zlib headers
+ * 78 01
+ * 78 5E
+ * 78 9C
+ * 78 DA
+ */
+bool isGRFEditorEncrypted(ref GRF grf, const(ubyte)[] data)
+{
+    auto ret = grf.grfEditorKey.length > 0 && data.length > 2 && data[0] != 0x00
+        && (data[0] != 0x78 || (data[1] != 0x9C && data[1] != 0x01 && data[1] != 0xDA && data[1] != 0x5E));
+    return ret;
 }
 
